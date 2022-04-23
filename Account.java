@@ -1,22 +1,20 @@
+import java.util.Scanner;
 
 public class Account {
-	String number;
-	String pin;
-	int balance;
-	String holder;
+	private String number;
+	private int balance;
+	private String type;
 	
 	public Account () {
-		number = "";
-		pin = "";
+		number = "0000";
 		balance = 0;
-		holder = "";
+		type = "0000";
 	}
 	
-	public Account (String newID,String newPIN,String newName,int newMoney) {
+	public Account (String newID, String newType, int newMoney) {
 		number = newID;
-		pin = newPIN;
 		balance = newMoney;
-		holder = newName;
+		type = newType;
 	}
 	
 	public void addBalance (int newMoney) {
@@ -30,37 +28,50 @@ public class Account {
 		String accountInfo = "";
 		
 		accountInfo = number + " , "
-				+ pin + " , "
-				+ holder + " , "
-				+ balance;
+				+ type + " , "
+				+ balance + " @ ";
 		
 		return accountInfo;
 	}
 	
+	public void readAccountInfo(String AccountInfo) {
+		Scanner sc = new Scanner(AccountInfo);
+		
+		String buffer;
+		//id
+		buffer = sc.next();
+		number = buffer;
+		buffer = sc.next();
+		//type
+		buffer = sc.next();
+		type = buffer;
+		buffer = sc.next();
+		//balance
+		buffer = sc.next();
+		balance = Integer.parseInt(buffer);
+		buffer = sc.next();
+		
+	}
+	
+	
 	public String getNumber() {
 		return number;
-	}
-	public String getPIN() {
-		return pin;
 	}
 	public int getBalance() {
 		return balance;
 	}
-	public String getHolder() {
-		return holder;
+	public String getType() {
+		return type;
 	}
 	
 	public void setNumber(String x) {
 		number = x;
 	}
-	public void setPIN(String x) {
-		pin = x;
-	}
 	public void setBalance(int x) {
 		balance = x;
 	}
-	public void setHolder(String x) {
-		holder = x;
+	public void setType(String x) {
+		type = x;
 	}
 
 }
