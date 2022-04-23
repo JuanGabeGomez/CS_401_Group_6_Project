@@ -1,0 +1,3 @@
+Cat,1234,teller,2
+Dog,2345,officer,1
+Duck,3456,manager,0
