@@ -1,24 +1,24 @@
 
 public class Customer {
-	protected int svgAcctNum;
-	protected int chkgAcctNum;
-	protected int cardNum;
-	protected int pinNum;
+	protected String svgAcctNum;
+	protected String chkgAcctNum;
+	protected String cardNum;
+	protected String pinNum;
 	protected String lName;
 	protected String fName;
 	protected String address;
 	
 	public Customer () {
-		svgAcctNum = 0000;
-		chkgAcctNum = 0000;
-		cardNum = 000000;
-		pinNum = 0000;
+		svgAcctNum = "Undefined";
+		chkgAcctNum = "Undefined";
+		cardNum = "Undefined";
+		pinNum = "Undefined";
 		lName = "Undefined";
 		fName = "Undefined";
 		address = "Undefined";
 	}
 	
-	public Customer(int newSvgAcctNum,int newChkgAcctNum,int newCardNum,int newPinNum,String newLName,String newFName,String newAddress) {
+	public Customer(String newSvgAcctNum,String newChkgAcctNum,String newCardNum,String newPinNum,String newLName,String newFName,String newAddress) {
 		setSvgAcctNum(newSvgAcctNum);
 		setChkgAcctNum(newChkgAcctNum);
 		setCardNum(newCardNum);
@@ -37,22 +37,22 @@ public class Customer {
 					+ getPinNum() + ","
 					+ getLName() + ","
 					+ getFName() + ","
-					+ getAddress() + ",";
+					+ getAddress();
 		
 		return customerinfo;
 	}
 	
 	
-	public int getSvgAcctNum() {
+	public String getSvgAcctNum() {
 		return svgAcctNum;
 	}
-	public int getChkgAcctNum() {
+	public String getChkgAcctNum() {
 		return chkgAcctNum;
 	}
-	public int getCardNum() {
+	public String getCardNum() {
 		return cardNum;
 	}
-	public int getPinNum() {
+	public String getPinNum() {
 		return pinNum;
 	}
 	public String getLName() {
@@ -65,16 +65,16 @@ public class Customer {
 		return address;
 	}
 	
-	private void setSvgAcctNum(int newSvgAcctNum) {
+	private void setSvgAcctNum(String newSvgAcctNum) {
 		svgAcctNum = newSvgAcctNum;;
 	}
-	private void setChkgAcctNum(int newChkgAcctNum) {
+	private void setChkgAcctNum(String newChkgAcctNum) {
 		chkgAcctNum = newChkgAcctNum;
 	}
-	public void setCardNum(int newCardNum) {
+	public void setCardNum(String newCardNum) {
 		cardNum = newCardNum;
 	}
-	public void setPinNum(int newPinNum) {
+	public void setPinNum(String newPinNum) {
 		pinNum = newPinNum;
 	}
 	public void setLName(String newLName) {

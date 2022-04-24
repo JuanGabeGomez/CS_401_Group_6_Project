@@ -33,24 +33,18 @@ public class AccountsData {
 		}
 		
 		public String toString() {
-			// Return a string containing all the DVDs in the
-			// order they are stored in the array along with
-			// the values for numdvds and the length of the array.
-			// Per assignment 1 instructions for proper format.
-			/*
-			String header = "numdvds = " + numdvds + "\n" +
-							"dvdArray.length = " + dvdArray.length + "\n";
+			String header = "numAccts = " + numAccts + "\n" +
+					"acctArray.length = " + acctArray.length + "\n";
 			String body = ""; 
 			
-			for(int i = 0; i < numdvds; i++) {
-				body = body + "\ndvdArray[" + i +"] = "
-						+ dvdArray[i].getTitle()
-						+ "," + dvdArray[i].getRating()
-						+ "," + dvdArray[i].getRunningTime() + "min\n";
+			for(int i = 0; i < numAccts; i++) {
+				body = body + "\nacctArray[" + i +"] = "
+						+ acctArray[i].getAcctNum() + "," 
+						+ acctArray[i].getType() + "," 
+						+ acctArray[i].getStatus() + ","
+						+ acctArray[i].getBalance();
 			}
 			return header + body;
-			*/
-			return null;
 		}
 
 
@@ -67,13 +61,32 @@ public class AccountsData {
 		}
 		
 		//Return query on position of an employee
-		public String getStatus(int index) {
-			return acctArray[index].getStatus();
+		public String getStatus(String acctNum) {
+			int i = isIndex(acctNum);
+			return acctArray[i].getStatus();	
 		}
 		
 		//Return query on authorization level of an employee
-		public String getBalance(int index) {
-			return acctArray[index].getBalance();
+		public String getBalance(String acctNum) {
+			int i = isIndex(acctNum);
+			return acctArray[i].getBalance();
+		}
+		
+		public String getAcctInfo(String acctNum) {
+			int i = isIndex(acctNum);
+			return acctArray[i].toString();
+		}
+		
+		public void setStatus(String acctNum,String inStatus) {
+			int i = isIndex(acctNum);
+			acctArray[i].setStatus(inStatus);
+			modified = true;
+		}
+		
+		public void setBalance(String acctNum,String inBal) {
+			int i = isIndex(acctNum);
+			acctArray[i].setBalance(inBal);
+			modified = true;
 		}
 		
 		/*
@@ -224,9 +237,11 @@ public class AccountsData {
 			
 			else {			
 				try {
+					System.out.println(sourceName);
 						FileWriter fWriter = new FileWriter(sourceName);
 						
 						for(int i = 0; i < numAccts; i++) {
+							System.out.println(acctArray[i].getStatus());
 							fWriter.write(acctArray[i] + "\n");
 						}
 						fWriter.close();
@@ -241,6 +256,10 @@ public class AccountsData {
 
 		}
 		
+		public String getAccount(String acctNum) {
+			
+			return "";
+		}
 		//End main public methods
 
 		// Additional private helper methods go here:

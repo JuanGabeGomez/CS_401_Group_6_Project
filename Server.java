@@ -77,9 +77,7 @@ class Server {
 		{
 
 			OutputStream outputStream = null;
-			InputStream inputStream = null;
-			
-			
+			InputStream inputStream = null;			
 			
 			try {
 				
@@ -96,58 +94,31 @@ class Server {
 		        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);        
 
 		        Message message = null;
+		        
 
 		        while((message = (Message) objectInputStream.readObject()) != null) {
+		        	/* Pre-loading database with every message object received,
+		        	 * to ensure most current data from database is viewed.
+		        	 */
 		        	String bankName = "Bank" + message.getBankNum();
 		        	employee.loadData(bankName + "-Employees.txt");
 			        customer.loadData(bankName + "-Customers.txt");
 			        account.loadData(bankName + "-Accounts.txt");
-		        
-		        	//Testing incoming message
-		        	//System.out.println(message.getType());
-		        	//System.out.println(message.getStatus());
-		        	//System.out.println(message.getText());
-		        	
-		        	
+			        
+			        //File path tester
+			        //System.out.println(account.toString());
+			       	
+			        //ATM type calls ATM handler method
+			        if("atm".equalsIgnoreCase(message.getSender())){
+			        	message = atmHandler(message); 
+			        	objectOutputStream.writeObject(message);	
+			        }
+			        
+			        //desktop type calls desktop handler method
 		        	if("desktop".equalsIgnoreCase(message.getSender())){
-			        	//String[] splitMsg = message.getText().split(",");
-			        	//message.setStatus("success");
-			        	//System.out.println(message.getStatus());
-				        objectOutputStream.writeObject(desktopHandler(message));
-
+		        			message = desktopHandler(message);
+		        			objectOutputStream.writeObject(message);
 				    }
-		        /*if("desktop".equalsIgnoreCase(message.getSender()) &&
-		        		"login".equalsIgnoreCase(message.getType())) {
-		        	String[] splitMsg = message.getText().split(",");
-		        	message.setStatus("success");
-		        	//System.out.println(message.getStatus());
-			        
-			        objectOutputStream.writeObject(message);
-
-			    }
-		        else if("desktop".equalsIgnoreCase(message.getSender()) &&
-		        		"logout".equalsIgnoreCase(message.getType())) {
-		        	message.setStatus("success");
-			        
-			        objectOutputStream.writeObject(message);
-			    }*/
-		        
-		        /*
-		        else if("logout".equalsIgnoreCase(message.getType())) {
-		        	message.setStatus("success");
-		        	//System.out.println(message.getStatus());
-			        
-			        objectOutputStream.writeObject(message);
-			    }
-		        
-		        else if("message".equalsIgnoreCase(message.getType())){
-		        	System.out.println("From client: " + message.getText());
-			        String temp = message.getText();
-			        message.setText(temp.toUpperCase());
-			        //System.out.println(message.getText());
-			        objectOutputStream.writeObject(message);
-			    }
-			    */
 			    
 			}
 
@@ -169,20 +140,25 @@ class Server {
 			}
 		}
 		
-		public Message desktopHandler(Message dtMsg) {
+		//private client handler methods
+		
+		private Message desktopHandler(Message dtMsg) {
 			if("login".equalsIgnoreCase(dtMsg.getType())) {
+				int numInd = 2;
+				
+				int empUnInd = 0;
+				int empPwInd = 1;
+
 				int counter = 0;
 				String[] splitText = dtMsg.getText().split(",");
-				String[] signIn = new String [2];
+				String[] signIn = new String [numInd];
 				
 				for(String a : splitText) {
 					signIn[counter] = a;
 					counter++;
 				}
 	        	
-				System.out.println("Username: " + signIn[0]);
-				System.out.println("Password: " + signIn[1]);
-				if(!employee.isEmployee(signIn[0],signIn[1])) {
+				if(!employee.isEmployee(signIn[empUnInd],signIn[empPwInd])) {
 					dtMsg.setStatus("failed");
 				}
 				else {
@@ -191,30 +167,51 @@ class Server {
 		        
 		        return dtMsg;
 		    }
+			
 			if("inquiry".equalsIgnoreCase(dtMsg.getType())) {
-				//From desktop:
-				//("1","desktop","inquiry","","account#,card#,pin#")
+				int numInd = 3;
+				
+				int acctInd = 0;
+				int cardInd = 1;
+				int pinInd = 2;
+				
 				int counter = 0;
 				String[] splitText = dtMsg.getText().split(",");
-				String[] signIn = new String [3];
+				String[] querry = new String [numInd];
 				
 				for(String a : splitText) {
-					signIn[counter] = a;
+					querry[counter] = a;
 					counter++;
 				}
 
+				if(customer.isAccountBelongToCard(querry[acctInd],querry[cardInd],querry[pinInd])) {
+					dtMsg.setStatus("success");
+					dtMsg.setText(customer.getCustInfo(querry[acctInd]) + "," + getAccount(querry[acctInd]));
+				}
+				else {
+					dtMsg.setStatus("failed");
+					dtMsg.setText("Information provided does not match");
+				}
+				return dtMsg;
 			}
+			
 			if("authorization".equalsIgnoreCase(dtMsg.getType())) {
+
+				int numInd = 2;
+				
+				int empUnInd = 0;
+				int empPwInd = 1;
+				
 				int counter = 0;
 				String[] splitText = dtMsg.getText().split(",");
-				String[] signIn = new String [2];
+				String[] signIn = new String [numInd];
 				
 				for(String a : splitText) {
 					signIn[counter] = a;
 					counter++;
 				}
 	        	
-				if(!employee.isAuthorized(signIn[0],signIn[1])) {
+				if(!employee.isAuthorized(signIn[empUnInd],signIn[empPwInd])) {
 					dtMsg.setStatus("not authorized");
 				}
 				else {
@@ -223,15 +220,139 @@ class Server {
 		        
 		        return dtMsg;
 			}
+			
 			if("update".equalsIgnoreCase(dtMsg.getType())) {
 				
+				/*Index allocated in accordance with Customer.toString() + "," + Account.toString()
+				 * Customer.toString() consist of: saving account number, checking account number, card number,
+				 * pin number, last name, first name, address
+				 * Account.toString() consist of: account number, type of account, account status, account balance
+				 */
+				int numInd = 11;
+				
+				int svgAcctInd = 0;
+				int chkgAcctInd = 1;
+				int cardInd = 2;
+				int pinInd = 3;
+				int lNameInd = 4;
+				int fNameInd = 5;
+				int addressInd = 6;
+				int acctNumInd = 7;
+				int acctTypeInd = 8;
+				int acctStatInd = 9;
+				int acctBalInd = 10;
+				
+				int counter = 0;
+				String[] splitText = dtMsg.getText().split(",");
+				String[] recInfo = null;
+				
+				recInfo = new String [numInd];
+					
+				for(String a : splitText) {
+					recInfo[counter] = a;
+					counter++;
+				}
+
+				if(recInfo[acctStatInd].equals("in used")) {
+					recInfo[acctStatInd] = "not used";
+				}
+						
+				customer.addOrModifyCustomer(recInfo[svgAcctInd],recInfo[chkgAcctInd],recInfo[cardInd],
+						recInfo[pinInd],recInfo[lNameInd],recInfo[fNameInd],recInfo[addressInd]);
+				
+				account.addOrModifyAccount(recInfo[acctNumInd],recInfo[acctTypeInd],recInfo[acctStatInd],
+						recInfo[acctBalInd]);
+				
+				customer.save();
+				account.save();
+				
+				dtMsg.setStatus("success");
+				dtMsg.setText("Update completed");
+				return dtMsg;
+
 			}
+			
 			if("logout".equalsIgnoreCase(dtMsg.getType())){
 				dtMsg.setStatus("success");
 				return dtMsg;
 			}
 			else {
 				return null;
+			}
+		}
+		
+		private Message atmHandler(Message atmMsg) {
+			if("login".equalsIgnoreCase(atmMsg.getType())) {
+				int numInd = 2;
+				
+				int cardInd = 0;
+				int pinInd = 1;
+				
+				int counter = 0;
+				String[] splitText = atmMsg.getText().split(",");
+				String[] querry = null;
+				
+				if(splitText.length == 2) {
+					querry = new String [numInd];
+					
+					for(String a : splitText) {
+						querry[counter] = a;
+						counter++;
+					}
+					
+					if(!(customer.isCard(querry[cardInd],querry[pinInd]))) {
+						String chkgAcct = customer.getChkgAcctNum(querry[cardInd]);
+						atmMsg.setStatus("success");
+						atmMsg.setText(getAccount(chkgAcct));
+					}
+				}	
+			}
+			
+			if("logout".equalsIgnoreCase(atmMsg.getType())) {
+				int numInd = 4;
+				
+				int acctInd = 0;
+				int acctTypeInd = 1;
+				int acctStatInd = 2;
+				int acctBalInd = 3;
+				
+				int counter = 0;
+				String[] splitText = atmMsg.getText().split(",");
+				String[] recInfo = null;
+				
+				recInfo = new String [numInd];
+					
+				for(String a : splitText) {
+					recInfo[counter] = a;
+					counter++;
+				}
+
+				if(recInfo[acctStatInd].equals("in used")) {
+					recInfo[acctStatInd] = "not used";
+				}
+
+					account.addOrModifyAccount(recInfo[acctInd],recInfo[acctTypeInd],
+							recInfo[acctStatInd],recInfo[acctBalInd]);
+					
+					account.save();
+					
+					atmMsg.setStatus("success");
+					atmMsg.setText("Have a good day");
+
+			}
+			return atmMsg;
+		}
+		
+		//private helper methods
+		
+		private String getAccount(String acctNum) {
+			if(!"in used".equalsIgnoreCase(account.getStatus(acctNum))) {
+				account.setStatus(acctNum,"in used");
+				account.save();
+				return account.getAcctInfo(acctNum);
+			}
+			else {
+				return "Account is in used";
 			}
 		}
 		

@@ -30,10 +30,10 @@ public class Account {
 	public String toString() {
 		String accountInfo = "";
 		
-		accountInfo = acctNum + " , "
-				+ type + " , "
-				+ status + ","
-				+ balance;
+		accountInfo = getAcctNum() + ","
+				+ getType() + ","
+				+ getStatus() + ","
+				+ getBalance();
 		
 		return accountInfo;
 	}
@@ -79,7 +79,7 @@ public class Account {
 		this.type = newType;
 	}
 	public void setStatus(String newStatus) {
-		this.balance = newStatus;
+		this.status = newStatus;
 	}
 	public void setBalance(String newBal) {
 		this.balance = newBal;

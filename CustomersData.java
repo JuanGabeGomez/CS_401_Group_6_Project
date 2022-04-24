@@ -33,24 +33,21 @@ public class CustomersData {
 		}
 		
 		public String toString() {
-			// Return a string containing all the DVDs in the
-			// order they are stored in the array along with
-			// the values for numdvds and the length of the array.
-			// Per assignment 1 instructions for proper format.
-			/*
-			String header = "numdvds = " + numdvds + "\n" +
-							"dvdArray.length = " + dvdArray.length + "\n";
+			String header = "numCusts = " + numCusts + "\n" +
+							"custArray.length = " + custArray.length + "\n";
 			String body = ""; 
 			
-			for(int i = 0; i < numdvds; i++) {
-				body = body + "\ndvdArray[" + i +"] = "
-						+ dvdArray[i].getTitle()
-						+ "," + dvdArray[i].getRating()
-						+ "," + dvdArray[i].getRunningTime() + "min\n";
+			for(int i = 0; i < numCusts; i++) {
+				body = body + "\ncustArray[" + i +"] = "
+							+ custArray[i].getSvgAcctNum() + ","
+							+ custArray[i].getChkgAcctNum() + ","
+							+ custArray[i].getCardNum() + ","
+							+ custArray[i].getPinNum() + ","
+							+ custArray[i].getLName() + ","
+							+ custArray[i].getFName() + ","
+							+ custArray[i].getAddress();
 			}
 			return header + body;
-			*/
-			return null;
 		}
 
 
@@ -60,19 +57,12 @@ public class CustomersData {
 		public int getNumCustomers() {
 			return numCusts;
 		}	
-		//Return query on username of an employee
-		public int getSvgAcctNum(int index) {
-			return custArray[index].getSvgAcctNum();
-		}
+		/*
 		//Return query on position of an employee
-		public int getChkgAcctNum(int index) {
-			return custArray[index].getChkgAcctNum();
-		}
-		//Return query on position of an employee
-		public int getCardNum(int index) {
+		public String getCardNum(int index) {
 			return custArray[index].getCardNum();
 		}
-		public int getPinNum(int index) {
+		public String getPinNum(int index) {
 			return custArray[index].getPinNum();
 		}
 		public String getLName(int index) {
@@ -84,7 +74,21 @@ public class CustomersData {
 		public String getAddress(int index) {
 			return custArray[index].getAddress();
 		}
-		
+		*/
+		//Return query on username of an employee
+		public String getSvgAcctNum(String cardNum) {
+			int i = isIndex(cardNum);
+			return custArray[i].getSvgAcctNum();
+		}
+		//Return query on checking account number 
+		public String getChkgAcctNum(String cardNum) {
+			int i = isIndex(cardNum);
+			return custArray[i].getChkgAcctNum();
+		}
+		public String getCustInfo(String acctNum) {
+			int i = isIndex(acctNum);
+			return custArray[i].toString();
+		}
 		/*
 		//String together sharable information of an employee
 		public String getInfo(int index) {
@@ -107,7 +111,7 @@ public class CustomersData {
 
 		//Add new DVD to collection array
 		//or modifies rating and/or runtime of an existing DVD in the collection array
-		public void addOrModifyCustomer(int newSvgNum,int newChkgNum,int newCardNum,int newPin,
+		public void addOrModifyCustomer(String newSvgNum,String newChkgNum,String newCardNum,String newPin,
 											String newLName,String newFName,String newAddress) {
 			
 			//if((rating.equals("PG") || rating.equals("PG-13") || rating.equals("R")) && Integer.parseInt(runningTime) > 0) {
@@ -119,7 +123,7 @@ public class CustomersData {
 				}
 			
 				for(int i = 0; i < numCusts; i++) {
-					if(custArray[i].getSvgAcctNum() == newSvgNum || custArray[i].getChkgAcctNum() == newChkgNum) {
+					if(custArray[i].getSvgAcctNum().equals(newSvgNum) || custArray[i].getChkgAcctNum().equals(newChkgNum)) {
 						custArray[i].setCardNum(newCardNum);
 						custArray[i].setPinNum(newPin);
 						custArray[i].setLName(newLName);
@@ -152,11 +156,11 @@ public class CustomersData {
 		}
 		
 		//Method to query data array for all Customers by saving account number
-		public String getCustsBySvgAcct(int svgAcctNum) {
+		public String getCustsBySvgAcct(String svgAcctNum) {
 			String foundCustomers = "";
 			
 			for (int i = 0; i < numCusts; i++) {
-				if(custArray[i].getSvgAcctNum() == svgAcctNum) {
+				if(custArray[i].getSvgAcctNum().equals(svgAcctNum)) {
 					foundCustomers = foundCustomers + custArray[i].getLName() + "," 
 							+ custArray[i].getFName() + ","
 							+ custArray[i].getAddress() + "\n";
@@ -166,11 +170,11 @@ public class CustomersData {
 		}
 
 		//Method to query data array for all Customers by checking account number
-		public String getCustsByChkgAcct(int chkgAcctNum) {
+		public String getCustsByChkgAcct(String chkgAcctNum) {
 			String foundCustomers = "";
 			
 			for (int i = 0; i < numCusts; i++) {
-				if(custArray[i].getChkgAcctNum() == chkgAcctNum) {
+				if(custArray[i].getChkgAcctNum().equals(chkgAcctNum)) {
 					foundCustomers = foundCustomers + custArray[i].getLName() + "," 
 							+ custArray[i].getFName() + ","
 							+ custArray[i].getAddress() + "\n";
@@ -203,16 +207,15 @@ public class CustomersData {
 							counter++;
 						}
 
-						addOrModifyCustomer(Integer.parseInt(temp[0]),Integer.parseInt(temp[1]),
-								Integer.parseInt(temp[2]),Integer.parseInt(temp[3]),temp[4],temp[5],temp[6]);
+						addOrModifyCustomer(temp[0],temp[1],temp[2],temp[3],temp[4],temp[5],temp[6]);
 						modified = false;
 					}
 				}
 				scanner.close();
 			}
 			catch(Exception e) {
-				JOptionPane.showMessageDialog(null, "Message: " + e);
-				//System.out.println("Message: " + e);
+				//JOptionPane.showMessageDialog(null, "Message: " + e);
+				System.out.println("Message: " + e);
 				
 				/*for(int i = 0; i < dvdArray.length; i++) {
 					System.out.println("dvdArray[" + i + "]: " + dvdArray[i]);
@@ -246,6 +249,35 @@ public class CustomersData {
 
 		}
 		
+		public boolean isAccountBelongToCard(String inAcctNum,String inCardNum,String inPin) {
+			
+			if(!(isCard(inCardNum,inPin))) {
+				int i = isIndex(inCardNum);
+				if(custArray[i].getChkgAcctNum().equals(inAcctNum) || custArray[i].getSvgAcctNum().equals(inAcctNum)) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			return false;
+		}
+		
+		public boolean isCard(String inCardNum,String inPin) {
+			int i = isIndex(inCardNum);
+			if(!(i < 0)) {
+				if(custArray[i].getPinNum() == inPin) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
+		}
+		
 		//End main public methods
 
 		// Additional private helper methods go here:
@@ -262,6 +294,56 @@ public class CustomersData {
 				custArray[i] = temp[i];
 			}
 		}
+
+		/*private boolean isCard(int inCardNum,int inPin) {
+			int i = isIndex(inCardNum);
+			if(!(i < 0)) {
+				if(custArray[i].getPinNum() == inPin) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
+		}*/
+		/*
+		private int indexBySvgNum(String svgNum) {
+			int foundOn = -1;
+			for (int i = 0; i < numCusts;i++) {
+				if(custArray[i].getSvgAcctNum().equals(svgNum)) {
+					foundOn = i;
+				}
+			}
+			
+			return foundOn;	
+		}
+		private int indexByChkgNum(String chkgNum) {
+			int foundOn = -1;
+			for (int i = 0; i < numCusts;i++) {
+				if(custArray[i].getChkgAcctNum().equals(chkgNum)) {
+					foundOn = i;
+				}
+			}
+			
+			return foundOn;	
+		}
+		*/
+		private int isIndex(String numInfo) {
+			int foundOn = -1;
+			for (int i = 0; i < numCusts;i++) {
+				if(custArray[i].getCardNum().equals(numInfo) 
+						|| custArray[i].getChkgAcctNum().equals(numInfo)
+						|| custArray[i].getSvgAcctNum().equals(numInfo)) {
+					foundOn = i;
+				}
+			}
+			
+			return foundOn;		
+		}
+		
 		
 		/*
 		//Check if Employees exist in data
@@ -278,7 +360,7 @@ public class CustomersData {
 		private void sort() {	
 			for(int i = 0; i < numCusts-1; i++) {
 				for(int j = i+1; j < numCusts; j++) {
-					if(custArray[i].getSvgAcctNum() > custArray[j].getSvgAcctNum()) {
+					if(custArray[i].getSvgAcctNum().compareTo(custArray[j].getSvgAcctNum()) > 0) {
 						Customer temp = custArray[i];
 						custArray[i] = custArray[j];
 						custArray[j] = temp;
