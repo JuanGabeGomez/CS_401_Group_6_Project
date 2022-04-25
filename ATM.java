@@ -134,6 +134,11 @@ public class ATM {
 	public void start()
 	{
 		login();
+		if(!loggedin)
+		{
+			JOptionPane.showMessageDialog(null, "Exiting ATM");
+			return;
+		}
 		while(true) {
 			String[] ATMmenu = {"Check balance", "Deposit", "Withdrawal", "Logout"};
 			int option = JOptionPane.showOptionDialog(null,
@@ -185,7 +190,8 @@ public class ATM {
 	private void login()
 	{
 		int loginCt = 0;
-		while(!loggedin && loginCt < 3)
+		boolean inuse = false;
+		while(!loggedin && loginCt < 3 && !inuse)
 		{
 			String loginConfirm = new String("");
 			String card = JOptionPane.showInputDialog("Enter card number insert card):");
@@ -213,16 +219,27 @@ public class ATM {
     	
     		if(loginConfirm.equals("success"))
     		{
-    			user = stringToAccount(loginReturn.getText());
-    			loggedin = true;
-    			return;
+    			if(loginReturn.getText().equals("Account is in used"))
+    				inuse = true;
+    			else
+    			{
+    				user = stringToAccount(loginReturn.getText());
+    				loggedin = true;
+    				return;
+    			}
     		}
     		loginCt++;
+		}
+		if(inuse)
+		{
+			JOptionPane.showMessageDialog(null, "Login Failure, account in use elsewhere");
+			return;
 		}
 		if(!loggedin)
 		{
 			JOptionPane.showMessageDialog(null, "Login Failure, exceeded max 3 attempts");
 		}
+		
 	}
 	
 	public void login(String card, String pin)
@@ -230,7 +247,8 @@ public class ATM {
 		if(!debug)
 			return;
 		int loginCt = 0;
-		while(!loggedin && loginCt < 3)
+		boolean inuse = false;
+		while(!loggedin && loginCt < 3 && !inuse)
 		{
 			String loginConfirm = new String("");
 			String loginStr = new String(card + "," + pin);
@@ -256,9 +274,14 @@ public class ATM {
     	
     		if(loginConfirm.equals("success"))
     		{
-    			user = stringToAccount(loginReturn.getText());
-    			loggedin = true;
-    			return;
+    			if(loginReturn.getText().equals("Account is in used"))
+    				inuse = true;
+    			else
+    			{
+    				user = stringToAccount(loginReturn.getText());
+    				loggedin = true;
+    				return;
+    			}
     		}
     		loginCt++;
 		}
@@ -394,6 +417,18 @@ public class ATM {
     			continue;	
     		}
     		type += customerParse.charAt(indexOfCustomer);
+    		indexOfCustomer++;
+    	}
+    	@SuppressWarnings("unused")
+		String inuse = new String("");
+    	indexOfCustomer++;
+    	while(customerParse.charAt(indexOfCustomer) != ',' && indexOfCustomer < customerParse.length())
+    	{
+    		if(customerParse.charAt(indexOfCustomer) == ' ') {
+    			indexOfCustomer++;
+    			continue;	
+    		}
+    		inuse += customerParse.charAt(indexOfCustomer);
     		indexOfCustomer++;
     	}
     	indexOfCustomer++;
