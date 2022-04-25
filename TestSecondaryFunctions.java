@@ -20,9 +20,10 @@ public class TestSecondaryFunctions {
 		ATM atm1 = new ATM(socket, number);
 		atm1.enableDebug();
 		String stringToParse = 1234 + " , "
-				+ "Checking , "
+				+ "checking , "
+				+ "in used , "
 				+ 1000 + " @ ";
-		Account user = new Account("1234", "Checking", 1000);
+		Account user = new Account("1234", "checking", "in used", "1000");
 		assertTrue(user.toString().equals(atm1.debugStringToAccount(stringToParse).toString()));
 		try {
 			socket.close();
@@ -44,8 +45,8 @@ public class TestSecondaryFunctions {
 		ATM atm1 = new ATM(socket, number);
 		atm1.enableDebug();
 		atm1.login("1","1");
-		Account user = new Account("1234", "Checking", 1000);
-		String testReceipt = "Account: " + user.getNumber() + "\n"
+		Account user = new Account("1234", "checking", "in used", "1000");
+		String testReceipt = "Account: " + user.getAcctNum() + "\n"
 				+ "Account type: " + user.getType() + "\n"
 				+ "Balance: $" + user.getBalance();
 		assertTrue(atm1.getReceipt().equals(testReceipt));

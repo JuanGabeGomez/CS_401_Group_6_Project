@@ -292,21 +292,21 @@ public class ATM {
 		openShutter();
 		int deposit = Integer.parseInt(JOptionPane.showInputDialog("Enter amount to deposit:"));
 		closeShutter();
-		int amount = user.getBalance();
-		user.setBalance(amount + deposit);
+		int amount = Integer.parseInt(user.getBalance());
+		user.setBalance(String.valueOf(amount + deposit));
 	}
 	
 	public void deposit(int deposit)
 	{
 		if(!debug)
 			return;
-		int amount = user.getBalance();
-		user.setBalance(amount + deposit);
+		int amount = Integer.parseInt(user.getBalance());
+		user.setBalance(String.valueOf(amount + deposit));
 	}
 	
 	private void withdrawal()
 	{
-		int amount = user.getBalance();
+		int amount = Integer.parseInt(user.getBalance());
 		int withdraw = Integer.parseInt(JOptionPane.showInputDialog("Enter amount to withdraw(available:" + amount + "):"));
 		if(withdraw > amount && user.getType().equals("checking"))
 			JOptionPane.showMessageDialog(null, "Sorry, that is too much, overdraft not enabled");
@@ -316,7 +316,7 @@ public class ATM {
 				JOptionPane.showMessageDialog(null, "Sorry, withdrawals over $10,000 require employee approval");
 				withdraw = Integer.parseInt(JOptionPane.showInputDialog("Enter new amount to withdraw(available:" + amount + ", 0 to cancel):"));
 			}
-			user.setBalance(amount - withdraw);
+			user.setBalance(String.valueOf(amount - withdraw));
 		}
 		else if(withdraw % 10 != 0) {
 			while(withdraw % 10 != 0)
@@ -324,10 +324,10 @@ public class ATM {
 				JOptionPane.showMessageDialog(null, "Sorry, withdrawals must be a multiple of 10");
 				withdraw = Integer.parseInt(JOptionPane.showInputDialog("Enter new amount to withdraw(available:" + amount + ", 0 to cancel):"));
 			}
-			user.setBalance(amount - withdraw);
+			user.setBalance(String.valueOf(amount - withdraw));
 		}
 		else
-			user.setBalance(amount - withdraw);
+			user.setBalance(String.valueOf(amount - withdraw));
 		calculateBills(withdraw);
 	}
 	
@@ -335,7 +335,7 @@ public class ATM {
 	{
 		if(!debug)
 			return;
-		int amount = user.getBalance();
+		int amount = Integer.parseInt(user.getBalance());
 		if(withdraw > amount && user.getType().equals("checking"))
 			JOptionPane.showMessageDialog(null, "Sorry, that is too much, overdraft not enabled");
 		else if (withdraw > 10000) {
@@ -344,10 +344,10 @@ public class ATM {
 				JOptionPane.showMessageDialog(null, "Sorry, withdrawals over $10,000 require employee approval");
 				withdraw = Integer.parseInt(JOptionPane.showInputDialog("Enter new amount to withdraw(available:" + amount + ", 0 to cancel):"));
 			}
-			user.setBalance(amount - withdraw);
+			user.setBalance(String.valueOf(amount - withdraw));
 		}
 		else
-			user.setBalance(amount - withdraw);
+			user.setBalance(String.valueOf(amount - withdraw));
 	}
 	
 	private void clearUser()
@@ -419,7 +419,6 @@ public class ATM {
     		type += customerParse.charAt(indexOfCustomer);
     		indexOfCustomer++;
     	}
-    	@SuppressWarnings("unused")
 		String inuse = new String("");
     	indexOfCustomer++;
     	while(customerParse.charAt(indexOfCustomer) != ',' && indexOfCustomer < customerParse.length())
@@ -431,6 +430,7 @@ public class ATM {
     		inuse += customerParse.charAt(indexOfCustomer);
     		indexOfCustomer++;
     	}
+    	inuse = "in used";
     	indexOfCustomer++;
     	while(customerParse.charAt(indexOfCustomer) != '@' && indexOfCustomer < customerParse.length())
     	{
@@ -441,8 +441,7 @@ public class ATM {
     		balance += customerParse.charAt(indexOfCustomer);
     		indexOfCustomer++;
     	}
-    	int trueBalance = Integer.parseInt(balance);
-    	Account ret = new Account(customerID, type, trueBalance);
+    	Account ret = new Account(customerID, type, inuse, balance);
 		return ret;
 	}
 
@@ -473,6 +472,18 @@ public class ATM {
     		type += customerParse.charAt(indexOfCustomer);
     		indexOfCustomer++;
     	}
+    	String inuse = new String("");
+    	indexOfCustomer++;
+    	while(customerParse.charAt(indexOfCustomer) != ',' && indexOfCustomer < customerParse.length())
+    	{
+    		if(customerParse.charAt(indexOfCustomer) == ' ') {
+    			indexOfCustomer++;
+    			continue;	
+    		}
+    		inuse += customerParse.charAt(indexOfCustomer);
+    		indexOfCustomer++;
+    	}
+    	inuse = "in used";
     	indexOfCustomer++;
     	while(customerParse.charAt(indexOfCustomer) != '@' && indexOfCustomer < customerParse.length())
     	{
@@ -483,14 +494,13 @@ public class ATM {
     		balance += customerParse.charAt(indexOfCustomer);
     		indexOfCustomer++;
     	}
-    	int trueBalance = Integer.parseInt(balance);
-    	Account ret = new Account(customerID, type, trueBalance);
+    	Account ret = new Account(customerID, type, inuse, balance);
 		return ret;
 	}
 	
 	private void printReceipt()
 	{
-		JOptionPane.showMessageDialog(null, "Account: " + user.getNumber() + "\n"
+		JOptionPane.showMessageDialog(null, "Account: " + user.getAcctNum() + "\n"
 				+ "Account type: " + user.getType() + "\n"
 				+ "Balance: $" + user.getBalance());
 	}
@@ -499,7 +509,7 @@ public class ATM {
 	{
 		if(!debug)
 			return null;
-		return "Account: " + user.getNumber() + "\n"
+		return "Account: " + user.getAcctNum() + "\n"
 				+ "Account type: " + user.getType() + "\n"
 				+ "Balance: $" + user.getBalance();
 	}

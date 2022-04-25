@@ -41,10 +41,10 @@ public class TestMainFunctions {
 		ATM atm1 = new ATM(socket, number);
 		atm1.enableDebug();
 		atm1.login("1","1");
-		int initial = atm1.getUser().getBalance();
+		int initial = Integer.parseInt(atm1.getUser().getBalance());
 		int deposit = 1000;
 		atm1.deposit(deposit);
-		assertTrue(initial + deposit == atm1.getUser().getBalance());
+		assertTrue(initial + deposit == Integer.parseInt(atm1.getUser().getBalance()));
 		try {
 			socket.close();
 		} catch (IOException e) {
@@ -66,10 +66,14 @@ public class TestMainFunctions {
 		ATM atm1 = new ATM(socket, number);
 		atm1.enableDebug();
 		atm1.login("1","1");
-		int initial = atm1.getUser().getBalance();
+		int initial = Integer.parseInt(atm1.getUser().getBalance());
 		int withdraw = 500;
 		atm1.withdrawal(withdraw);
-		assertTrue(initial - withdraw == atm1.getUser().getBalance());
+		int now = initial - withdraw;
+		assertTrue(now == Integer.parseInt(atm1.getUser().getBalance()));
+		atm1.withdrawal(600);
+		int current = Integer.parseInt(atm1.getUser().getBalance());
+		assertEquals(now, current);
 		try {
 			socket.close();
 		} catch (IOException e) {
