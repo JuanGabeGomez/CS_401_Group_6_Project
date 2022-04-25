@@ -290,23 +290,23 @@ public class ATM {
 	private void deposit()
 	{
 		openShutter();
-		int deposit = Integer.parseInt(JOptionPane.showInputDialog("Enter amount to deposit:"));
+		float deposit = Float.parseFloat(JOptionPane.showInputDialog("Enter amount to deposit:"));
 		closeShutter();
-		int amount = Integer.parseInt(user.getBalance());
+		float amount = Float.parseFloat(user.getBalance());
 		user.setBalance(String.valueOf(amount + deposit));
 	}
 	
-	public void deposit(int deposit)
+	public void deposit(float deposit)
 	{
 		if(!debug)
 			return;
-		int amount = Integer.parseInt(user.getBalance());
+		float amount = Float.parseFloat(user.getBalance());
 		user.setBalance(String.valueOf(amount + deposit));
 	}
 	
 	private void withdrawal()
 	{
-		int amount = Integer.parseInt(user.getBalance());
+		float amount = Float.parseFloat(user.getBalance());
 		int withdraw = Integer.parseInt(JOptionPane.showInputDialog("Enter amount to withdraw(available:" + amount + "):"));
 		if(withdraw > amount && user.getType().equals("checking"))
 			JOptionPane.showMessageDialog(null, "Sorry, that is too much, overdraft not enabled");
@@ -335,7 +335,7 @@ public class ATM {
 	{
 		if(!debug)
 			return;
-		int amount = Integer.parseInt(user.getBalance());
+		float amount = Float.parseFloat(user.getBalance());
 		if(withdraw > amount && user.getType().equals("checking"))
 			JOptionPane.showMessageDialog(null, "Sorry, that is too much, overdraft not enabled");
 		else if (withdraw > 10000) {
@@ -432,7 +432,7 @@ public class ATM {
     	}
     	inuse = "in used";
     	indexOfCustomer++;
-    	while(customerParse.charAt(indexOfCustomer) != '@' && indexOfCustomer < customerParse.length())
+    	while(indexOfCustomer < customerParse.length() && customerParse.charAt(indexOfCustomer) != '@')
     	{
     		if(customerParse.charAt(indexOfCustomer) == ' ') {
     			indexOfCustomer++;

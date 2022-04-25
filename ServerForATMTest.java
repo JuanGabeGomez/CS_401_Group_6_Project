@@ -66,7 +66,7 @@ class Server {
 			PrintWriter out = null;
 			BufferedReader in = null;
 			try {
-				Account user = new Account("1234", "checking", "in used", "1000");
+				Account user = new Account("1234", "checking", "in used", "1000.00");
 				
 				String sendover = user.getAcctNum() + " , "
 						+ user.getType() + " , "

@@ -41,10 +41,10 @@ public class TestMainFunctions {
 		ATM atm1 = new ATM(socket, number);
 		atm1.enableDebug();
 		atm1.login("1","1");
-		int initial = Integer.parseInt(atm1.getUser().getBalance());
-		int deposit = 1000;
+		float initial = Float.parseFloat(atm1.getUser().getBalance());
+		float deposit = 1000;
 		atm1.deposit(deposit);
-		assertTrue(initial + deposit == Integer.parseInt(atm1.getUser().getBalance()));
+		assertTrue(initial + deposit == Float.parseFloat(atm1.getUser().getBalance()));
 		try {
 			socket.close();
 		} catch (IOException e) {
@@ -66,14 +66,14 @@ public class TestMainFunctions {
 		ATM atm1 = new ATM(socket, number);
 		atm1.enableDebug();
 		atm1.login("1","1");
-		int initial = Integer.parseInt(atm1.getUser().getBalance());
+		float initial = Float.parseFloat(atm1.getUser().getBalance());
 		int withdraw = 500;
 		atm1.withdrawal(withdraw);
-		int now = initial - withdraw;
-		assertTrue(now == Integer.parseInt(atm1.getUser().getBalance()));
+		float now = initial - withdraw;
+		assertTrue(now == Float.parseFloat(atm1.getUser().getBalance()));
 		atm1.withdrawal(600);
-		int current = Integer.parseInt(atm1.getUser().getBalance());
-		assertEquals(now, current);
+		float current = Float.parseFloat(atm1.getUser().getBalance());
+		assertEquals(now, current, 0.1);
 		try {
 			socket.close();
 		} catch (IOException e) {

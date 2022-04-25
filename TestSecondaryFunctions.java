@@ -45,7 +45,7 @@ public class TestSecondaryFunctions {
 		ATM atm1 = new ATM(socket, number);
 		atm1.enableDebug();
 		atm1.login("1","1");
-		Account user = new Account("1234", "checking", "in used", "1000");
+		Account user = new Account("1234", "checking", "in used", "1000.00");
 		String testReceipt = "Account: " + user.getAcctNum() + "\n"
 				+ "Account type: " + user.getType() + "\n"
 				+ "Balance: $" + user.getBalance();
