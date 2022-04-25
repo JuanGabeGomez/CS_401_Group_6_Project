@@ -62,7 +62,9 @@ class Server {
 	// ClientHandler class
 	public static class ClientHandler implements Runnable {
 		private final Socket clientSocket;
+		private int authLevel = 0;
 		
+		// Database
 		private EmployeesData employee = new EmployeesData();
 		private CustomersData customer = new CustomersData();
 		private AccountsData account = new AccountsData();
@@ -95,7 +97,7 @@ class Server {
 
 		        Message message = null;
 		        
-
+		        // Continuously listen for new message object from client
 		        while((message = (Message) objectInputStream.readObject()) != null) {
 		        	/* Pre-loading database with every message object received,
 		        	 * to ensure most current data from database is viewed.
@@ -105,23 +107,22 @@ class Server {
 			        customer.loadData(bankName + "-Customers.txt");
 			        account.loadData(bankName + "-Accounts.txt");
 			        
-			        //File path tester
-			        //System.out.println(account.toString());
+			        //System.out.println("Bank name: " + bankName);
 			       	
-			        //ATM type calls ATM handler method
+			        // ATM type calls ATM handler method
 			        if("atm".equalsIgnoreCase(message.getSender())){
 			        	message = atmHandler(message); 
 			        	objectOutputStream.writeObject(message);	
 			        }
 			        
-			        //desktop type calls desktop handler method
+			        // desktop type calls desktop handler method
 		        	if("desktop".equalsIgnoreCase(message.getSender())){
 		        			message = desktopHandler(message);
 		        			objectOutputStream.writeObject(message);
 				    }
-			    
-			}
+		        }
 
+		        // Closing streams
 		        if (objectOutputStream != null) {
 		        	objectOutputStream.close();
 		        	//System.out.println("Output stream closed");
@@ -132,23 +133,29 @@ class Server {
 					clientSocket.close();
 					//System.out.println("Client socket closed");
 				}
-		        //System.out.print("Client socket closed");
-		        //clientSocket.close();
 			}
+			
 			catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
 		
-		//private client handler methods
+		// Private client handler methods
 		
+		// Handles request from desktop clients
 		private Message desktopHandler(Message dtMsg) {
+			//System.out.println("Initial authorization level: " + authLevel);
+			
+			// Listen for type login
 			if("login".equalsIgnoreCase(dtMsg.getType())) {
+				
+				//Login by desktop user requires username and password
 				int numInd = 2;
 				
 				int empUnInd = 0;
 				int empPwInd = 1;
 
+				// Split received text message into array for processing
 				int counter = 0;
 				String[] splitText = dtMsg.getText().split(",");
 				String[] signIn = new String [numInd];
@@ -158,35 +165,46 @@ class Server {
 					counter++;
 				}
 	        	
+				// If username and password does not match, status return "failed"
+				// else return status "success"
 				if(!employee.isEmployee(signIn[empUnInd],signIn[empPwInd])) {
 					dtMsg.setStatus("failed");
 				}
 				else {
+					authLevel = employee.getAuthLevel(signIn[empUnInd]);
 					dtMsg.setStatus("success");
-				}
-		        
+				}       
 		        return dtMsg;
 		    }
 			
+			// Listen for type inquiry
 			if("inquiry".equalsIgnoreCase(dtMsg.getType())) {
+				
+				//Desktop inquiry requires account number, card number, and pin
 				int numInd = 3;
 				
 				int acctInd = 0;
 				int cardInd = 1;
 				int pinInd = 2;
 				
+				// Split received text message into array for processing
 				int counter = 0;
 				String[] splitText = dtMsg.getText().split(",");
-				String[] querry = new String [numInd];
+				String[] query = new String [numInd];
 				
 				for(String a : splitText) {
-					querry[counter] = a;
+					query[counter] = a;
 					counter++;
 				}
 
-				if(customer.isAccountBelongToCard(querry[acctInd],querry[cardInd],querry[pinInd])) {
+				/* If account number, card number, and pin matches, change status to "success",
+				 * update text message to include customer info,account info
+				 * If any of the field does not match return status "failed
+				 * update text message to include "Information provided does not match"
+				 */
+				if(customer.isAccountBelongToCard(query[acctInd],query[cardInd],query[pinInd])) {
 					dtMsg.setStatus("success");
-					dtMsg.setText(customer.getCustInfo(querry[acctInd]) + "," + getAccount(querry[acctInd]));
+					dtMsg.setText(customer.getCustInfo(query[cardInd]) + "," + account.getAccount(query[acctInd]));
 				}
 				else {
 					dtMsg.setStatus("failed");
@@ -195,13 +213,16 @@ class Server {
 				return dtMsg;
 			}
 			
+			// Listen for type authorization
 			if("authorization".equalsIgnoreCase(dtMsg.getType())) {
-
+				
+				// Desktop authorization requires username and password
 				int numInd = 2;
 				
 				int empUnInd = 0;
 				int empPwInd = 1;
 				
+				// Split received text message into array for processing
 				int counter = 0;
 				String[] splitText = dtMsg.getText().split(",");
 				String[] signIn = new String [numInd];
@@ -211,19 +232,22 @@ class Server {
 					counter++;
 				}
 	        	
+				// Requires employee username and password, if does not match return "not authorized"
+				// else return "authorized"
 				if(!employee.isAuthorized(signIn[empUnInd],signIn[empPwInd])) {
 					dtMsg.setStatus("not authorized");
 				}
 				else {
 					dtMsg.setStatus("authorized");
 				}
-		        
 		        return dtMsg;
 			}
 			
+			// Listen for type update
 			if("update".equalsIgnoreCase(dtMsg.getType())) {
 				
-				/*Index allocated in accordance with Customer.toString() + "," + Account.toString()
+				/* 
+				 * Desktop update requires customer object and account object
 				 * Customer.toString() consist of: saving account number, checking account number, card number,
 				 * pin number, last name, first name, address
 				 * Account.toString() consist of: account number, type of account, account status, account balance
@@ -242,6 +266,7 @@ class Server {
 				int acctStatInd = 9;
 				int acctBalInd = 10;
 				
+				// Split received text message into array for processing
 				int counter = 0;
 				String[] splitText = dtMsg.getText().split(",");
 				String[] recInfo = null;
@@ -253,13 +278,27 @@ class Server {
 					counter++;
 				}
 
+				// Future consideration: if statement with status "new"
+				// Change status from "in used" to "not used", so that the account is open to be updated
 				if(recInfo[acctStatInd].equals("in used")) {
 					recInfo[acctStatInd] = "not used";
 				}
-						
+				
+				/*
+				// Future consideration: limiting change by authorization level
+				if(authLevel >= 1) {
+					
+				}
+				if(authLevel == 0) {
+					
+				}
+				*/
+				
+				// Add or modify Customer in the customer collective
 				customer.addOrModifyCustomer(recInfo[svgAcctInd],recInfo[chkgAcctInd],recInfo[cardInd],
 						recInfo[pinInd],recInfo[lNameInd],recInfo[fNameInd],recInfo[addressInd]);
 				
+				// Add or modify Account in the account collective
 				account.addOrModifyAccount(recInfo[acctNumInd],recInfo[acctTypeInd],recInfo[acctStatInd],
 						recInfo[acctBalInd]);
 				
@@ -272,43 +311,58 @@ class Server {
 
 			}
 			
+			// Listen for type logout
 			if("logout".equalsIgnoreCase(dtMsg.getType())){
 				dtMsg.setStatus("success");
 				return dtMsg;
 			}
+			
+			// Return message as is due to no type matching
 			else {
-				return null;
+				return dtMsg;
 			}
 		}
 		
+		// Handles request from ATM clients
 		private Message atmHandler(Message atmMsg) {
+			
+			// Listen for ATM login type
 			if("login".equalsIgnoreCase(atmMsg.getType())) {
+				 
+				// ATM login requires card number and pin
 				int numInd = 2;
 				
 				int cardInd = 0;
 				int pinInd = 1;
 				
+				// Split received text message into array for processing
 				int counter = 0;
 				String[] splitText = atmMsg.getText().split(",");
 				String[] querry = null;
 				
-				if(splitText.length == 2) {
-					querry = new String [numInd];
+				querry = new String [numInd];
 					
-					for(String a : splitText) {
-						querry[counter] = a;
-						counter++;
-					}
+				for(String a : splitText) {
+					querry[counter] = a;
+					counter++;
+				}
 					
-					if(!(customer.isCard(querry[cardInd],querry[pinInd]))) {
-						String chkgAcct = customer.getChkgAcctNum(querry[cardInd]);
-						atmMsg.setStatus("success");
-						atmMsg.setText(getAccount(chkgAcct));
-					}
-				}	
+				// Authenticate card and return account info if success, else return failed
+				if(!(customer.isCard(querry[cardInd],querry[pinInd]))) {
+					String chkgAcct = customer.getChkgAcctNum(querry[cardInd]);
+					atmMsg.setStatus("success");
+					atmMsg.setText(account.getAccount(chkgAcct));
+				}
+				else {
+					atmMsg.setStatus("failed");
+					atmMsg.setText("Incorrect pin");
+				}
 			}
 			
+			// Listen for ATM logout type
 			if("logout".equalsIgnoreCase(atmMsg.getType())) {
+				
+				// ATM logout requires account object
 				int numInd = 4;
 				
 				int acctInd = 0;
@@ -316,6 +370,7 @@ class Server {
 				int acctStatInd = 2;
 				int acctBalInd = 3;
 				
+				// Split received text message into array for processing
 				int counter = 0;
 				String[] splitText = atmMsg.getText().split(",");
 				String[] recInfo = null;
@@ -327,17 +382,19 @@ class Server {
 					counter++;
 				}
 
+				// Ready account status to be reuse
 				if(recInfo[acctStatInd].equals("in used")) {
 					recInfo[acctStatInd] = "not used";
 				}
 
-					account.addOrModifyAccount(recInfo[acctInd],recInfo[acctTypeInd],
+				// Add or modifies Account in the collective
+				account.addOrModifyAccount(recInfo[acctInd],recInfo[acctTypeInd],
 							recInfo[acctStatInd],recInfo[acctBalInd]);
 					
-					account.save();
+				account.save();
 					
-					atmMsg.setStatus("success");
-					atmMsg.setText("Have a good day");
+				atmMsg.setStatus("success");
+				atmMsg.setText("Have a good day");
 
 			}
 			return atmMsg;
@@ -345,6 +402,8 @@ class Server {
 		
 		//private helper methods
 		
+		/*
+		// Get account info in account database
 		private String getAccount(String acctNum) {
 			if(!"in used".equalsIgnoreCase(account.getStatus(acctNum))) {
 				account.setStatus(acctNum,"in used");
@@ -355,6 +414,7 @@ class Server {
 				return "Account is in used";
 			}
 		}
+		*/
 		
 	}
 }

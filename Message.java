@@ -24,13 +24,9 @@ public class Message implements Serializable {
     //Overload constructor
     public Message(String bankNum, String sender, String type, String status, String text){
     	setBankNum(bankNum);
-    	//this.sender = setSender(sender);
     	setSender(sender);
-        //this.type = setType(type);
     	setType(type);
-        //this.status = setStatus(status);
     	setStatus(status);
-        //this.text = setText(text);
     	setText(text);
     }
     
@@ -40,22 +36,18 @@ public class Message implements Serializable {
     
     private void setSender(String sender) {
     	this.sender = sender;
-    	//return sender;
     }
 
     private void setType(String type){
     	this.type = type;
-    	//return type;
     }
 
     public void setStatus(String status){
     	this.status = status;
-    	//return status;
     }
 
     public void setText(String text){
     	this.text = text;
-    	//return text;
     }
     
     public String getBankNum() {

@@ -1,5 +1,5 @@
-
 public class Customer {
+	
 	protected String svgAcctNum;
 	protected String chkgAcctNum;
 	protected String cardNum;
@@ -8,6 +8,7 @@ public class Customer {
 	protected String fName;
 	protected String address;
 	
+	// Constructor
 	public Customer () {
 		svgAcctNum = "Undefined";
 		chkgAcctNum = "Undefined";
@@ -18,6 +19,7 @@ public class Customer {
 		address = "Undefined";
 	}
 	
+	// Overloaded constructor
 	public Customer(String newSvgAcctNum,String newChkgAcctNum,String newCardNum,String newPinNum,String newLName,String newFName,String newAddress) {
 		setSvgAcctNum(newSvgAcctNum);
 		setChkgAcctNum(newChkgAcctNum);
@@ -28,6 +30,7 @@ public class Customer {
 		setAddress(newAddress);
 	}
 	
+	// Return a string with all variables separated by commas
 	public String toString() {
 		String customerinfo = "";
 		
@@ -42,6 +45,7 @@ public class Customer {
 		return customerinfo;
 	}
 	
+	// Public getter methods
 	
 	public String getSvgAcctNum() {
 		return svgAcctNum;
@@ -65,15 +69,8 @@ public class Customer {
 		return address;
 	}
 	
-	private void setSvgAcctNum(String newSvgAcctNum) {
-		svgAcctNum = newSvgAcctNum;;
-	}
-	private void setChkgAcctNum(String newChkgAcctNum) {
-		chkgAcctNum = newChkgAcctNum;
-	}
-	public void setCardNum(String newCardNum) {
-		cardNum = newCardNum;
-	}
+	// Public setter methods
+	
 	public void setPinNum(String newPinNum) {
 		pinNum = newPinNum;
 	}
@@ -85,5 +82,17 @@ public class Customer {
 	}
 	public void setAddress(String newAddress) {
 		address = newAddress;
+	}
+	
+	// Private setter methods
+	
+	private void setSvgAcctNum(String newSvgAcctNum) {
+		svgAcctNum = newSvgAcctNum;;
+	}
+	private void setChkgAcctNum(String newChkgAcctNum) {
+		chkgAcctNum = newChkgAcctNum;
+	}
+	private void setCardNum(String newCardNum) {
+		cardNum = newCardNum;
 	}
 }

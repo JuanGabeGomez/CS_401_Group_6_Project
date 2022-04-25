@@ -1,9 +1,11 @@
 public class Account {
+	
 	private String acctNum;
 	private String type;
 	private String status;
 	private String balance;
 	
+	// Constructor
 	public Account () {
 		this.acctNum = "0000";
 		this.type = "Undefined";
@@ -11,22 +13,15 @@ public class Account {
 		this.balance = "0.00";
 	}
 	
+	// Overloaded constructor
 	public Account (String newAcctNum, String newType, String newStatus, String newMoney) {
-		this.acctNum = newAcctNum;
-		this.balance = newMoney;
-		this.status = newStatus;
-		this.type = newType;
+		setAcctNum(newAcctNum);
+		setType(newType);
+		setStatus(newStatus);
+		setBalance(newMoney);
 	}
 	
-	/*
-	public void addBalance (int newMoney) {
-		balance += newMoney;
-	}
-	public void removeBalance (int x) {
-		balance -= x;
-	}
-	*/
-	
+	// Return a string with all variables separated by commas
 	public String toString() {
 		String accountInfo = "";
 		
@@ -38,26 +33,7 @@ public class Account {
 		return accountInfo;
 	}
 	
-	/*
-	public void readAccountInfo(String AccountInfo) {
-		Scanner sc = new Scanner(AccountInfo);
-		
-		String buffer;
-		//id
-		buffer = sc.next();
-		number = buffer;
-		buffer = sc.next();
-		//type
-		buffer = sc.next();
-		type = buffer;
-		buffer = sc.next();
-		//balance
-		buffer = sc.next();
-		balance = Integer.parseInt(buffer);
-		buffer = sc.next();
-		
-	}
-	*/
+	// Public getter methods
 	
 	public String getAcctNum() {
 		return acctNum;
@@ -71,13 +47,9 @@ public class Account {
 	public String getBalance() {
 		return balance;
 	}
+	
+	// Public setter methods 
 
-	public void setAcctNum(String newAcctNum) {
-		this.acctNum = newAcctNum;
-	}
-	public void setType(String newType) {
-		this.type = newType;
-	}
 	public void setStatus(String newStatus) {
 		this.status = newStatus;
 	}
@@ -85,4 +57,12 @@ public class Account {
 		this.balance = newBal;
 	}
 
+	// Private setter methods
+	
+	private void setAcctNum(String newAcctNum) {
+		this.acctNum = newAcctNum;
+	}
+	private void setType(String newType) {
+		this.type = newType;
+	}
 }
