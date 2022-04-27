@@ -53,6 +53,13 @@ public class CustomersData {
 	}
 
 	// Public helper methods:
+	
+	// Return requiring index
+	
+	// Return Customer info, require index
+	public String getCustByIndex(int index) {
+		return custArray[index].toString();
+	}
 		
 	// Return query on the number of Customers in data
 	public int getNumCustomers() {
@@ -266,7 +273,7 @@ public class CustomersData {
 	public boolean isCard(String inCardNum,String inPin) {
 		int i = isIndex(inCardNum);
 		if(!(i < 0)) {
-			if(custArray[i].getPinNum() == inPin) {
+			if(!(custArray[i].getPinNum().compareTo(inPin) == 0)) {
 				return true;
 			}
 			else {

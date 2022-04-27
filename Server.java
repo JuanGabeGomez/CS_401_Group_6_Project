@@ -143,7 +143,7 @@ class Server {
 		// Private client handler methods
 		
 		// Handles request from desktop clients
-		private Message desktopHandler(Message dtMsg) {
+		public Message desktopHandler(Message dtMsg) {
 			//System.out.println("Initial authorization level: " + authLevel);
 			
 			// Listen for type login
@@ -279,8 +279,8 @@ class Server {
 				}
 
 				// Future consideration: if statement with status "new"
-				// Change status from "in used" to "not used", so that the account is open to be updated
-				if(recInfo[acctStatInd].equals("in used")) {
+				// Change status from "in use" to "not used", so that the account is open to be updated
+				if(recInfo[acctStatInd].equals("in use")) {
 					recInfo[acctStatInd] = "not used";
 				}
 				
@@ -324,7 +324,7 @@ class Server {
 		}
 		
 		// Handles request from ATM clients
-		private Message atmHandler(Message atmMsg) {
+		public Message atmHandler(Message atmMsg) {
 			
 			// Listen for ATM login type
 			if("login".equalsIgnoreCase(atmMsg.getType())) {
@@ -346,7 +346,7 @@ class Server {
 					querry[counter] = a;
 					counter++;
 				}
-					
+				
 				// Authenticate card and return account info if success, else return failed
 				if(!(customer.isCard(querry[cardInd],querry[pinInd]))) {
 					String chkgAcct = customer.getChkgAcctNum(querry[cardInd]);
@@ -383,7 +383,7 @@ class Server {
 				}
 
 				// Ready account status to be reuse
-				if(recInfo[acctStatInd].equals("in used")) {
+				if(recInfo[acctStatInd].equals("in use")) {
 					recInfo[acctStatInd] = "not used";
 				}
 
@@ -405,16 +405,27 @@ class Server {
 		/*
 		// Get account info in account database
 		private String getAccount(String acctNum) {
-			if(!"in used".equalsIgnoreCase(account.getStatus(acctNum))) {
-				account.setStatus(acctNum,"in used");
+			if(!"in use".equalsIgnoreCase(account.getStatus(acctNum))) {
+				account.setStatus(acctNum,"in use");
 				account.save();
 				return account.getAcctInfo(acctNum);
 			}
 			else {
-				return "Account is in used";
+				return "Account is in use";
 			}
 		}
 		*/
 		
+		/*
+		// Future consideration for converting currency
+		private String dollarToYen(float dollar) {
+			
+			return "";
+		}
+		private String yenToDollar(float yen) {
+			
+			return "";
+		}
+		*/
 	}
 }

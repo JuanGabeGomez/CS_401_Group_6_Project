@@ -55,7 +55,26 @@ public class AccountsData {
 	public int getNumAcct() {
 		return numAccts;
 	}
-		
+	
+	// Return requiring index
+	public String getAcctByIndex(int index) {
+		return acctArray[index].toString();
+	}
+	public String getAcctNumByIndex(int index) {
+		return acctArray[index].getAcctNum();
+	}
+	public String getTypeByIndex(int index) {
+		return acctArray[index].getType();
+	}
+	public String getStatusByIndex(int index) {
+		return acctArray[index].getStatus();
+	}
+	public String getBalanceByIndex(int index) {
+		return acctArray[index].getBalance();
+	}
+	
+	// Return requiring account number
+	
 	// Return query on type of an account, require account number
 	public String getType(String acctNum) {
 		int i = isIndex(acctNum);
@@ -207,13 +226,13 @@ public class AccountsData {
 		}
 		
 	public String getAccount(String acctNum) {
-		if(!"in used".equalsIgnoreCase(getStatus(acctNum))) {
-			setStatus(acctNum,"in used");
+		if(!"in use".equalsIgnoreCase(getStatus(acctNum))) {
+			setStatus(acctNum,"in use");
 			save();
 			return getAcctInfo(acctNum);
 		}
 		else {
-			return "Account is in used";
+			return "Account is in use";
 		}
 	}
 
