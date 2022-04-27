@@ -1,77 +1,68 @@
-import java.util.Scanner;
-
 public class Account {
-	private String number;
-	private int balance;
+	
+	private String acctNum;
 	private String type;
+	private String status;
+	private String balance;
 	
+	// Constructor
 	public Account () {
-		number = "0000";
-		balance = 0;
-		type = "0000";
+		this.acctNum = "0000";
+		this.type = "Undefined";
+		this.status = "Not used";
+		this.balance = "0.00";
 	}
 	
-	public Account (String newID, String newType, int newMoney) {
-		number = newID;
-		balance = newMoney;
-		type = newType;
+	// Overloaded constructor
+	public Account (String newAcctNum, String newType, String newStatus, String newMoney) {
+		setAcctNum(newAcctNum);
+		setType(newType);
+		setStatus(newStatus);
+		setBalance(newMoney);
 	}
 	
-	public void addBalance (int newMoney) {
-		balance += newMoney;
-	}
-	public void removeBalance (int x) {
-		balance -= x;
-	}
-	
+	// Return a string with all variables separated by commas
 	public String toString() {
 		String accountInfo = "";
 		
-		accountInfo = number + " , "
-				+ type + " , "
-				+ balance + " @ ";
+		accountInfo = getAcctNum() + ","
+				+ getType() + ","
+				+ getStatus() + ","
+				+ getBalance();
 		
 		return accountInfo;
 	}
 	
-	public void readAccountInfo(String AccountInfo) {
-		Scanner sc = new Scanner(AccountInfo);
-		
-		String buffer;
-		//id
-		buffer = sc.next();
-		number = buffer;
-		buffer = sc.next();
-		//type
-		buffer = sc.next();
-		type = buffer;
-		buffer = sc.next();
-		//balance
-		buffer = sc.next();
-		balance = Integer.parseInt(buffer);
-		buffer = sc.next();
-		
-	}
+	// Public getter methods
 	
-	
-	public String getNumber() {
-		return number;
-	}
-	public int getBalance() {
-		return balance;
+	public String getAcctNum() {
+		return acctNum;
 	}
 	public String getType() {
 		return type;
 	}
+	public String getStatus() {
+		return status;
+	}
+	public String getBalance() {
+		return balance;
+	}
 	
-	public void setNumber(String x) {
-		number = x;
+	// Public setter methods 
+
+	public void setStatus(String newStatus) {
+		this.status = newStatus;
 	}
-	public void setBalance(int x) {
-		balance = x;
-	}
-	public void setType(String x) {
-		type = x;
+	public void setBalance(String newBal) {
+		this.balance = newBal;
 	}
 
+	// Private setter methods
+	
+	private void setAcctNum(String newAcctNum) {
+		this.acctNum = newAcctNum;
+	}
+	private void setType(String newType) {
+		this.type = newType;
+	}
 }
