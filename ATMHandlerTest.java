@@ -18,100 +18,164 @@ public class ATMHandlerTest {
 	private ClientHandlerMethod atmTest = null;
 	
 	private AccountsData aAccount = new AccountsData();
-	
 	private AccountsData bAccount = new AccountsData();
 	
 	public ATMHandlerTest() {
-
+		
+		
 	}
 	
 	@Test
-	public void stage1_testAcceptCard() {
+	public void stage1_Bank1testAcceptCard() {
+		System.out.println("***Bank1-ATM Test***\n");
 		aAccount.loadData(acctFile);
-		bAccount.loadData(acctFile);
+		int aCount = 0;
+		int bCount = 0;
 		
-		System.out.println("***Before login***");
 		for(int i = 0; i < aAccount.getNumAcct(); i++) {
-			System.out.println("Account 'status' B = A[" + i + "]: " 
-				+ bAccount.getStatusByIndex(i).equals(aAccount.getStatusByIndex(i)));
-
-			assertTrue(bAccount.getStatusByIndex(i).equals(aAccount.getStatusByIndex(i)));
+			if("not used".equalsIgnoreCase(aAccount.getStatusByIndex(i))) {
+				aCount++;
+			}
 		}
+		System.out.println("Before login - Number of accounts 'not used' status: " + aCount);
 		
-		//atmMsgTest = new Message("1","ATM","login","","777777,0201");		// Failure due to incorrect pin
 		atmMsgTest = new Message("1","ATM","login","","777777,0101");
 		atmTest = new ClientHandlerMethod(atmMsgTest);
 		atmMsgTest = atmTest.atmHandler(atmMsgTest);
+		
+		String msgStatus = atmMsgTest.getStatus();
+		System.out.println("ATM(correct pin) - Card accepted: " + msgStatus);
 
 		bAccount.loadData(acctFile);
-		
-		System.out.println("\n***After login***");
-		for(int i = 0; i < aAccount.getNumAcct(); i++) {
-			boolean temp = bAccount.getStatusByIndex(i).equals(aAccount.getStatusByIndex(i));
-			System.out.println("Account 'status' B = A[" + i + "]: " + temp);	
-			if(i == 1) {
-				assertFalse(temp);
-			}
-			else {
-				assertTrue(bAccount.getStatusByIndex(i).equals(aAccount.getStatusByIndex(i)));
+		for(int i = 0; i < bAccount.getNumAcct(); i++) {
+			if("not used".equalsIgnoreCase(bAccount.getStatusByIndex(i))) {
+				bCount++;
 			}
 		}
-		System.out.println();
+		System.out.println("After login - Number of accounts 'not used' status: " + bCount);
+		assertTrue(aCount != bCount && "success".equalsIgnoreCase(msgStatus));
 	}
 	
 	@Test 
-	public void stage2_testRejectCard() {
+	public void stage2_Bank1testRejectCard() {		
+		//atmMsgTest = new Message("1","ATM","login","","888888,0202");	// Failure due to pin being correct
+		atmMsgTest = new Message("1","ATM","login","","888888,0101");
+		atmTest = new ClientHandlerMethod(atmMsgTest);
+		atmMsgTest = atmTest.atmHandler(atmMsgTest);
 		
-		//Message atmMsgTwoTest = new Message("1","ATM","login","","888888,0202");	// Failure due to pin being correct
-		Message atmMsgTwoTest = new Message("1","ATM","login","","888888,0101");
-		atmTest = new ClientHandlerMethod(atmMsgTwoTest);
-		String returnStatTwo = atmTest.atmHandler(atmMsgTwoTest).getStatus();
-		System.out.println("***Testing Card and Pin not matching***");
-		System.out.println("Card accepted: " + returnStatTwo + "\n");
-		assertTrue(!"success".equalsIgnoreCase(returnStatTwo));
-		atmTest = null;
+		String msgStatus = atmMsgTest.getStatus();
+		System.out.println("\nATM(incorrect pin) - Card accepted: " + msgStatus);
+		assertTrue(!"success".equalsIgnoreCase(msgStatus));
 	}
 	
 	@Test
-	public void stage3_testRejectRepeatedCard() {
-		//Message atmTwoMsgTest = new Message("1","ATM","login","","888888",0202");	// Failure due to card/pin being a different set
-		Message atmTwoMsgTest = new Message("1","ATM","login","","777777,0101");
-		atmTest = new ClientHandlerMethod(atmTwoMsgTest);
-		String returnMsg = atmTest.atmHandler(atmTwoMsgTest).getText();
+	public void stage3_Bank1testRejectUseRepeatedCard() {
+		//atmMsgTest = new Message("1","ATM","login","","888888",0202");	// Failure due to card/pin being a different set
+		atmMsgTest = new Message("1","ATM","login","","777777,0101");
+		atmTest = new ClientHandlerMethod(atmMsgTest);
+		atmMsgTest = atmTest.atmHandler(atmMsgTest);
 		
-		System.out.println("***Test login into account in use***");
-		System.out.println("Test return 'text' from server: " + returnMsg);
-		assertTrue(returnMsg.equals("Account is in use"));
-		
-		System.out.println();
-
+		String msgText = atmMsgTest.getText();
+		System.out.println("\nUsing card already in use: " + msgText);
+		assertTrue("Account is in use".equalsIgnoreCase(msgText));
 	}
 
 	@Test
-	public void stage4_testChangeAndSave() {
+	public void stage4_Bank1testChangeAndSave() {
 		bAccount.loadData(acctFile);
 		
 		String acctNum = "2345";
 		
-		System.out.println("***Before logout***");
-		for(int i = 0; i < bAccount.getNumAcct(); i++) {
-			System.out.println(bAccount.getAcctByIndex(i));
-		}
+		System.out.println("\nATM - Before logout account info: " + bAccount.getAcctInfo(acctNum));
 		
 		double deposit = Double.parseDouble(bAccount.getBalance(acctNum));
 		deposit = deposit + 20.00;
-		// Account: 2345 Type: checking Org Balance: 301.09
-		String logoutString = "2345,checking,in use," + deposit;  // String simulate the text string of message that will be received by ATM
-		atmMsgTest = new Message("1","ATM","logout","",logoutString);
+
+		String text = acctNum + ",checking,in use," + deposit;  // String simulate the text string of message that will be received by ATM
+		atmMsgTest = new Message("1","ATM","logout","",text);
 		atmTest = new ClientHandlerMethod(atmMsgTest);
+		atmMsgTest = atmTest.atmHandler(atmMsgTest);
 		
-		String logoutStat = atmTest.atmHandler(atmMsgTest).getStatus();
+		String msgStatus = atmMsgTest.getStatus();
+		System.out.println("ATM - Logout status: " + msgStatus);
+		
 		bAccount.loadData(acctFile);
-		System.out.println("***After logout***");
-		for(int i = 0; i < bAccount.getNumAcct(); i++) {
-			System.out.println(bAccount.getAcctByIndex(i));
-		}
-		assertTrue("success".equalsIgnoreCase(logoutStat));
+		System.out.println("ATM - After logout account info: " + bAccount.getAcctInfo(acctNum));
 		
+		assertTrue("success".equalsIgnoreCase(msgStatus));	
+	}
+	
+	@Test
+	public void stage5_Bank2testAcceptCard() {
+		System.out.println("\n***Bank2-ATM Test***\n");
+		String altBankNum = "2";
+		String sender = "atm";
+		String type = "login";
+		String status = "";
+		String text = "999999,0303";
+		
+		String altBankName = "Bank" + altBankNum;
+		acctFile = altBankName + "-Accounts.txt";
+		
+		aAccount.loadData(acctFile);
+		int aCount = 0;
+		int bCount = 0;
+		
+		for(int i = 0; i < aAccount.getNumAcct(); i++) {
+			if("not used".equalsIgnoreCase(aAccount.getStatusByIndex(i))) {
+				aCount++;
+			}
+		}
+		System.out.println("Before login - Number of accounts 'not used' status: " + aCount);
+		
+		atmMsgTest = new Message(altBankNum,sender,type,status,text);
+		atmTest = new ClientHandlerMethod(atmMsgTest);
+		atmMsgTest = atmTest.atmHandler(atmMsgTest);
+		
+		String msgStatus = atmMsgTest.getStatus();
+		System.out.println("ATM(correct pin) - Card accepted: " + msgStatus);
+
+		bAccount.loadData(acctFile);
+		for(int i = 0; i < bAccount.getNumAcct(); i++) {
+			if("not used".equalsIgnoreCase(bAccount.getStatusByIndex(i))) {
+				bCount++;
+			}
+		}
+		System.out.println("After login - Number of accounts 'not used' status: " + bCount);
+		assertTrue(aCount != bCount && "success".equalsIgnoreCase(msgStatus));
+	}
+
+	@Test
+	public void stage6_Bank2testChangeAndSave() {
+		String altBankNum = "2";
+		String sender = "atm";
+		String type = "logout";
+		String status = "";
+		String text = "";
+
+		String altBankName = "Bank" + altBankNum;
+		acctFile = altBankName + "-Accounts.txt";
+
+		bAccount.loadData(acctFile);
+		
+		String acctNum = "6789";
+		
+		System.out.println("\nATM - Before logout account info: " + bAccount.getAcctInfo(acctNum));
+		
+		double deposit = Double.parseDouble(bAccount.getBalance(acctNum));
+		deposit = deposit + 20.00;
+
+		text = acctNum + ",checking,in use," + deposit;  // String simulate the text string of message that will be received by ATM
+		atmMsgTest = new Message(altBankNum,sender,type,status,text);
+		atmTest = new ClientHandlerMethod(atmMsgTest);
+		atmMsgTest = atmTest.atmHandler(atmMsgTest);
+		
+		String msgStatus = atmMsgTest.getStatus();
+		System.out.println("ATM - Logout status: " + msgStatus);
+		
+		bAccount.loadData(acctFile);
+		System.out.println("ATM - After logout account info: " + bAccount.getAcctInfo(acctNum));
+		
+		assertTrue("success".equalsIgnoreCase(msgStatus));	
 	}
 }

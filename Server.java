@@ -3,7 +3,9 @@
  * provided in class by the professor.
  */
 import java.io.*;
+import java.math.RoundingMode;
 import java.net.*;
+import java.text.DecimalFormat;
 
 // Server class
 class Server {
@@ -389,7 +391,7 @@ class Server {
 
 				// Add or modifies Account in the collective
 				account.addOrModifyAccount(recInfo[acctInd],recInfo[acctTypeInd],
-							recInfo[acctStatInd],recInfo[acctBalInd]);
+							recInfo[acctStatInd],twoDecimal(recInfo[acctBalInd]));
 					
 				account.save();
 					
@@ -401,6 +403,15 @@ class Server {
 		}
 		
 		//private helper methods
+		
+		private String twoDecimal(String number) {
+			double temp = Double.parseDouble(number);
+			DecimalFormat formatDecimal = new DecimalFormat("0.00");
+			formatDecimal.setRoundingMode(RoundingMode.HALF_UP);
+			String adjusted = formatDecimal.format(temp);
+			
+			return adjusted;
+		}
 		
 		/*
 		// Get account info in account database

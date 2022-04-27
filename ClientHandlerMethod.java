@@ -1,3 +1,5 @@
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 public class ClientHandlerMethod {
 	//private final Socket clientSocket;
@@ -265,7 +267,7 @@ public class ClientHandlerMethod {
 
 					// Add or modifies Account in the collective
 					account.addOrModifyAccount(recInfo[acctInd],recInfo[acctTypeInd],
-								recInfo[acctStatInd],recInfo[acctBalInd]);
+							recInfo[acctStatInd],twoDecimal(recInfo[acctBalInd]));
 						
 					account.save();
 						
@@ -277,6 +279,15 @@ public class ClientHandlerMethod {
 			}
 			
 			//private helper methods
+			
+			private String twoDecimal(String number) {
+				double temp = Double.parseDouble(number);
+				DecimalFormat formatDecimal = new DecimalFormat("0.00");
+				formatDecimal.setRoundingMode(RoundingMode.HALF_UP);
+				String adjusted = formatDecimal.format(temp);
+				
+				return adjusted;
+			}
 			
 			/*
 			// Get account info in account database

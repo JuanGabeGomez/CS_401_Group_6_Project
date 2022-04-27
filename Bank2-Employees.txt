@@ -1,0 +1,3 @@
+Goat,1234,teller,0,
+Ram,2345,officer,1,
+Sheep,3456,manager,2,
