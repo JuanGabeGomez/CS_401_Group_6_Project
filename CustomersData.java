@@ -57,10 +57,8 @@ public class CustomersData {
 	// Return requiring index
 	
 	// Return Customer info, require index
-	//public String getCustByIndex(int index) {
-	public Customer getCustByIndex(int index) {
-		return custArray[index];
-		//return custArray[index].toString();
+	public String getCustByIndex(int index) {
+		return custArray[index].toString();
 	}
 		
 	// Return query on the number of Customers in data

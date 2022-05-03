@@ -33,7 +33,7 @@ public class ATMHandlerTest {
 		int bCount = 0;
 		
 		for(int i = 0; i < aAccount.getNumAcct(); i++) {
-			if("not used".equalsIgnoreCase(aAccount.getStatusByIndex(i).getStatus())) {
+			if("not used".equalsIgnoreCase(aAccount.getStatusByIndex(i))) {
 				aCount++;
 			}
 		}
@@ -48,7 +48,7 @@ public class ATMHandlerTest {
 
 		bAccount.loadData(acctFile);
 		for(int i = 0; i < bAccount.getNumAcct(); i++) {
-			if("not used".equalsIgnoreCase(bAccount.getStatusByIndex(i).getStatus())) {
+			if("not used".equalsIgnoreCase(bAccount.getStatusByIndex(i))) {
 				bCount++;
 			}
 		}
@@ -122,7 +122,7 @@ public class ATMHandlerTest {
 		int bCount = 0;
 		
 		for(int i = 0; i < aAccount.getNumAcct(); i++) {
-			if("not used".equalsIgnoreCase(aAccount.getStatusByIndex(i).getStatus())) {
+			if("not used".equalsIgnoreCase(aAccount.getStatusByIndex(i))) {
 				aCount++;
 			}
 		}
@@ -137,7 +137,7 @@ public class ATMHandlerTest {
 
 		bAccount.loadData(acctFile);
 		for(int i = 0; i < bAccount.getNumAcct(); i++) {
-			if("not used".equalsIgnoreCase(bAccount.getStatusByIndex(i).getStatus())) {
+			if("not used".equalsIgnoreCase(bAccount.getStatusByIndex(i))) {
 				bCount++;
 			}
 		}

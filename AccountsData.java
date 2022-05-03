@@ -55,10 +55,22 @@ public class AccountsData {
 	public int getNumAcct() {
 		return numAccts;
 	}
-	//public String getStatusByIndex(int index) {
-	public Account getStatusByIndex(int index) {
-		//return acctArray[index].getStatus();
-		return acctArray[index];
+	
+	// Return requiring index
+	public String getAcctByIndex(int index) {
+		return acctArray[index].toString();
+	}
+	public String getAcctNumByIndex(int index) {
+		return acctArray[index].getAcctNum();
+	}
+	public String getTypeByIndex(int index) {
+		return acctArray[index].getType();
+	}
+	public String getStatusByIndex(int index) {
+		return acctArray[index].getStatus();
+	}
+	public String getBalanceByIndex(int index) {
+		return acctArray[index].getBalance();
 	}
 	
 	// Return requiring account number

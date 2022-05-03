@@ -57,8 +57,9 @@ public class EmployeesData {
 
 	// Public helper methods:
 	
-	public Employee getEmpByInd(int index) {
-		return empArray[index];
+	// Return account info, require index
+	public String getEmpByInd(int index) {
+		return empArray[index].toString();
 	}
 		
 	// Return query on the number of Employee in the array
