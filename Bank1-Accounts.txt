@@ -1,4 +1,4 @@
 1234,saving,not used,200.01
 2345,checking,not used,301.09
 3456,saving,not used,1.00
-4567,checking,not use,2.00
+4567,checking,not used,2.00
