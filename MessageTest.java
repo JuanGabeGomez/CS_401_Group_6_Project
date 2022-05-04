@@ -4,10 +4,7 @@ import org.junit.jupiter.api.Test;
 
 public class MessageTest {
 
-	@Test
-	public void test() {
-		fail("Not yet implemented");
-	}
+	
 	@Test
 	public void testmessage() {
 		Message message1 = new Message();
@@ -20,7 +17,7 @@ public class MessageTest {
 		
 		
 		System.out.println("Overload Constructor");
-		Message message2 = new Message("012221","Customer","None", "Success","H");
+		Message message2 = new Message("2345","Customer","None", "Success","H");
 		System.out.println(message2.getBankNum());
 		System.out.println(message2.getSender());
 		System.out.println(message2.getType());
