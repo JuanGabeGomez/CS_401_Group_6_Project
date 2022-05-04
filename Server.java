@@ -352,8 +352,14 @@ class Server {
 				// Authenticate card and return account info if success, else return failed
 				if(!(customer.isCard(querry[cardInd],querry[pinInd]))) {
 					String chkgAcct = customer.getChkgAcctNum(querry[cardInd]);
-					atmMsg.setStatus("success");
-					atmMsg.setText(account.getAccount(chkgAcct));
+					if(!"in use".equalsIgnoreCase(account.getStatus(chkgAcct))){
+						atmMsg.setStatus("success");
+						atmMsg.setText(account.getAccount(chkgAcct));
+					}
+					else {
+						atmMsg.setStatus("in use");
+						atmMsg.setText("Account is in use");
+					}
 				}
 				else {
 					atmMsg.setStatus("failed");
